@@ -70,7 +70,7 @@ extension KeyboardShortcuts {
 
 		private var cancelButton: NSButtonCell?
 
-		public var showCancel: Bool = true
+		public var showCancel: Bool = false
 
 		private var showsCancelButton: Bool {
 			get { (cell as? NSSearchFieldCell)?.cancelButtonCell != nil }
@@ -91,7 +91,6 @@ extension KeyboardShortcuts {
 			self.onChange = onChange
 
 			super.init(frame: .zero)
-			self.cell = CenteredSearchFieldCell()
 			self.delegate = self
 			self.placeholderString = "record_shortcut".localized
 			self.alignment = .center
@@ -341,17 +340,6 @@ extension KeyboardShortcuts {
 			onChange?(shortcut)
 		}
 	}
-}
-
-final class CenteredSearchFieldCell: NSSearchFieldCell {
-    override func drawingRect(forBounds rect: NSRect) -> NSRect {
-        var newRect = super.drawingRect(forBounds: rect)
-        let heightDelta = rect.height - newRect.height
-        if heightDelta > 0 {
-            newRect.origin.y += heightDelta / 2
-        }
-        return newRect
-    }
 }
 
 extension Notification.Name {
