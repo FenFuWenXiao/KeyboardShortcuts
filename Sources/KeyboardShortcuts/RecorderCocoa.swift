@@ -32,8 +32,8 @@ extension KeyboardShortcuts {
 		private var canBecomeKey = false
 		private var eventMonitor: LocalEventMonitor?
 		private var shortcutsNameChangeObserver: NSObjectProtocol?
-		private var windowDidResignKeyObserver: NSObjectProtocol?
-		private var windowDidBecomeKeyObserver: NSObjectProtocol?
+		public var windowDidResignKeyObserver: NSObjectProtocol?
+		public var windowDidBecomeKeyObserver: NSObjectProtocol?
 
 		/**
 		The shortcut name for the recorder.
@@ -70,10 +70,12 @@ extension KeyboardShortcuts {
 
 		private var cancelButton: NSButtonCell?
 
+		public var showCancel: Bool = true
+
 		private var showsCancelButton: Bool {
 			get { (cell as? NSSearchFieldCell)?.cancelButtonCell != nil }
 			set {
-				(cell as? NSSearchFieldCell)?.cancelButtonCell = newValue ? cancelButton : nil
+				(cell as? NSSearchFieldCell)?.cancelButtonCell = newValue && showCancel ? cancelButton : nil
 			}
 		}
 
@@ -89,6 +91,7 @@ extension KeyboardShortcuts {
 			self.onChange = onChange
 
 			super.init(frame: .zero)
+			self.cell = CenteredSearchFieldCell()
 			self.delegate = self
 			self.placeholderString = "record_shortcut".localized
 			self.alignment = .center
@@ -338,6 +341,17 @@ extension KeyboardShortcuts {
 			onChange?(shortcut)
 		}
 	}
+}
+
+final class CenteredSearchFieldCell: NSSearchFieldCell {
+    override func drawingRect(forBounds rect: NSRect) -> NSRect {
+        var newRect = super.drawingRect(forBounds: rect)
+        let heightDelta = rect.height - newRect.height
+        if heightDelta > 0 {
+            newRect.origin.y += heightDelta / 2
+        }
+        return newRect
+    }
 }
 
 extension Notification.Name {
